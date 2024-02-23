@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative; /* Set position to relative */
+        }
+
+        .container {
+            background-color: #2a943f;
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            position: relative; /* Ensure container is positioned */
+            margin-top: 120px;
+        }
+
+        img.certificate-image {
+            position: absolute; /* Position absolutely */
+            top: 0; /* Align with top of the page */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Move back by half of image size */
+            max-width: 100%;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .certificate-details {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #certificate {
+            display: none;
+        }
+    </style>
+</head>
+<body style="background-color: #f0f8ff;">
+    <img src="nptel_top.png" alt="Certificate Image" class="certificate-image">
+    <div class="container">
+        <h2>ENTER DETAILS</h2>
+        <form id="certificateForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="registerNumber">Register Number:</label>
+            <input type="text" id="registerNumber" name="registerNumber" required><br>
+
+            <label for="course">Course:</label>
+            <select id="course" name="course" required>
+                <option value="Data Science for Engineers">Data Science for Engineers</option>
+                <option value="Reinforcement Learning">Reinforcement Learning</option>
+                <option value="Programming in JAVA">Programming in JAVA</option>
+                <option value="Data Analytics with Python">Data Analytics with Python</option>
+                <option value="Foundations of Cryptography">Foundations of Cryptography</option>
+                <option value="Introduction to Internet of Things">Introduction to Internet of Things</option>
+                <option value="Ethical Hacking">Ethical Hacking</option>
+                <option value="Social Networks">Social Networks</option>
+                <option value="Introduction To Problem Solving And Programming">Introduction To Problem Solving And Programming</option>
+                <option value="NOC:Introduction To Programming In C">NOC:Introduction To Programming In C</option>
+                <option value="NOC:Cloud Computing And Distributed Systems">NOC:Cloud Computing And Distributed Systems</option>
+            </select><br>
+
+            <label for="assignmentScore">Assignment Score (out of 25):</label>
+            <input type="number" id="assignmentScore" name="assignmentScore" min="0" max="25" required><br>
+
+            <label for="examScore">Exam Score (out of 75):</label>
+            <input type="number" id="examScore" name="examScore" min="0" max="75" required><br>
+
+            <input type="submit" value="CLICK HERE">
+        </form>
+
+        <div class="certificate-details" id="certificateDetails">
+            <h3>Certificate Details</h3>
+            <p id="certificateName"></p>
+            <p id="certificateCourse"></p>
+            <p id="certificateScore"></p>
+            <a href="#" id="DOWNLOAD CERTIFICATE">DOWNLOAD CERTIFICATE</a>
+        </div>
+
+        <canvas id="certificate" width="800" height="600"></canvas>
+    </div>
+
+    <script>
+        document.getElementById('certificateForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let name = document.getElementById('name').value;
+            let registerNumber = document.getElementById('registerNumber').value;
+            let course = document.getElementById('course').value;
+            let assignmentScore = parseInt(document.getElementById('assignmentScore').value);
+            let examScore = parseInt(document.getElementById('examScore').value);
+            let finalScore = assignmentScore + examScore;
+            
+            if (assignmentScore >= 10 && examScore >= 30) {
+                if (finalScore >= 40) {
+                    document.getElementById('certificateName').innerText = "Name: " + name;
+                    document.getElementById('certificateCourse').innerText = "Course: " + course;
+                    document.getElementById('certificateScore').innerText = "Final Score: " + finalScore + "%";
+                    document.getElementById('certificateDetails').style.display = "block";
+                    document.getElementById('certificate').style.display = "block";
+                    drawCertificate(name, registerNumber, course, finalScore);
+                } else {
+                    alert("Score below passing criteria.");
+                }
+            } else {
+                alert("Score below passing criteria.");
+            }
+        });
+        
+        document.getElementById('DOWNLOAD CERTIFICATE').addEventListener('click', function() {
+            let canvas = document.getElementById('certificate');
+            let link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'certificate.png';
+            link.click();
+        });
+
+        function drawCertificate(name, registerNumber, course, finalScore) {
+        let canvas = document.getElementById('certificate');
+        let ctx = canvas.getContext('2d');
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw margin lines
+        ctx.fillStyle = '#000'; // Set color to black
+        ctx.fillRect(0, 0, canvas.width, 20); // Top line
+        ctx.fillRect(0, 0, 20, canvas.height); // Left line
+        ctx.fillRect(canvas.width - 20, 0, 20, canvas.height); // Right line
+        ctx.fillRect(0, canvas.height - 20, canvas.width, 20); // Bottom line
+
+        // Draw certificate background
+        ctx.fillStyle = 'red';
+        ctx.fillRect(20, 20, canvas.width - 40, canvas.height * 0.3); // Adjusted to fit within the margin lines
+
+        // Draw certificate background
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(20, canvas.height * 0.3, canvas.width - 40, canvas.height * 0.7 - 40);
+
+
+        // Draw certificate image at the top
+        let imgTop = new Image();
+        imgTop.onload = function () {
+            ctx.drawImage(imgTop, 100, 60, 600, 100); // Adjust the position and size of the image as needed
+            // Draw certificate text
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 30px Arial';
+            ctx.fillText('CERTIFICATE OF COMPLETION', canvas.width / 2 - 200, 210);
+            ctx.font = 'bold 19px Arial';
+            ctx.fillText('This is to certify that', canvas.width / 2 - 190, 240);
+            ctx.fillText(name, canvas.width / 2 - 0, 240);
+            ctx.fillText('with register number', canvas.width / 2 - 195, 280);
+            ctx.fillText(registerNumber, canvas.width / 2 - 0, 280);
+            ctx.fillText('has successfully completed the course', canvas.width / 2 - 195, 320);
+            ctx.fillText(course, canvas.width / 2 - 195, 360);
+            ctx.fillText('with a final score of ' + finalScore + '%', canvas.width / 2 - 180, 400);
+
+            // Draw certificate type based on final score
+            let certificateType = '';
+            if (finalScore >= 90) {
+                certificateType = 'Elite + Gold';
+            } else if (finalScore >= 75) {
+                certificateType = 'Elite + Silver';
+            } else if (finalScore >= 60) {
+                certificateType = 'Elite';
+            } else if (finalScore >= 40) {
+                certificateType = 'Successfully Completed';
+            }
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText(certificateType, canvas.width / 2 - 150, 440);
+        };
+        imgTop.src = 'nptel_top.png'; // Path to your image
+
+        // Draw certificate image at the bottom
+        let imgBottom = new Image();
+        imgBottom.onload = function () {
+            ctx.drawImage(imgBottom, 20, canvas.height - 140, 760, 120); // Adjust the position and size of the image as needed  
+            //top-left corne, top-left corner of the image, This is the width of the image, This is the height of the image
+        };
+        imgBottom.src = 'nptel_down.png'; // Path to your image
+    }
+    </script>
+</body>
+</html>
